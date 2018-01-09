@@ -1,5 +1,6 @@
 var five = require("johnny-five");
 var EtherPortClient = require("etherport-client").EtherPortClient;
+
 // update host to the IP address for your ESP board
 // Plug D7 - In (ARDUINO 13) 
 // GND - GND 
@@ -7,7 +8,7 @@ var EtherPortClient = require("etherport-client").EtherPortClient;
 
 var board = new five.Board({
     port: new EtherPortClient({
-        host: "192.168.1.35",
+        host: "192.168.1.34",
         port: 3030
     }),
     timeout: 1e5,
@@ -17,9 +18,7 @@ var board = new five.Board({
 board.on("ready", function() {
     console.log("READY!");
 
-    var led = new five.Led(13);
-   // var led = new five.Led(2);
-   //   led.blink();
+    var led = new five.Led(2);
  
     led.blink(500);
 });

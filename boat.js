@@ -6,8 +6,9 @@ var EtherPortClient = require("etherport-client").EtherPortClient;
 var D5 = 14;
 var D6 = 12;
 var D7 = 13; //PWM signal
-var PWMA = 2000;
-var PWMB = 2000;
+var PWMA = 500;
+var PWMB = 500;
+var ip = "192.168.1.34"; 
 
 //Second
 var D2 = 4;
@@ -16,10 +17,10 @@ var D8 = 15; //PWM Signal
 
 var board = new five.Board({
     port: new EtherPortClient({
-        host: "192.168.1.34",
+        host: ip,
         port: 3030
     }),
-    timeout: 1e3,
+    timeout: 1e5,
     repl: false
 });
 

@@ -12,8 +12,6 @@ var turnTime = 2500;
 if (argv.ip!=''){ console.log(`provided ip : ${argv.ip}`); ip = argv.ip;}
 else{ console.log(`the ip is not provided as arg, usign default : ${ip}!`);}
 
-if(argv.turnTime!=''){turnTime=argv.turnTime; } 
-else { console.log(`Using default turnTime: ${turnTime}`); }
 
 // update host to the IP address for your ESP board
 

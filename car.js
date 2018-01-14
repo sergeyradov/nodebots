@@ -2,18 +2,30 @@ var keypress = require('keypress');
 var five = require("johnny-five");
 var EtherPortClient = require("etherport-client").EtherPortClient;
 
+//Board address 
+var ip = "192.168.1.51";
+
+
 // update host to the IP address for your ESP board
+
+//First motor
 var D5 = 14;
 var D6 = 12;
 var D7 = 13; //PWM signal
-var PWMA = 500;
-var PWMB = 500;
-var ip = "192.168.1.34"; 
+var PWMB = 1000;
 
-//Second
+//Second motor
 var D2 = 4;
 var D3 = 0;
 var D8 = 15; //PWM Signal
+var PWMA = 1000;
+
+
+var state = {
+  up: false,
+  down: false
+};
+
 
 var board = new five.Board({
     port: new EtherPortClient({
@@ -26,7 +38,8 @@ var board = new five.Board({
 
 board.on("ready", function() {
     console.log("READY!");
-    
+    keypress(process.stdin);
+ 	    
  //   var led = new five.Led(2);
  //   led.blink(100);
 
@@ -46,15 +59,12 @@ board.on("ready", function() {
     }
     });
 
-leftWheel.setPWM(D7,0); 
-leftWheel.setPin(D6,0); 
-leftWheel.setPin(D5,0); 
 
-rightWheel.setPWM(D8,0);
-rightWheel.setPin(D3,0);
-rightWheel.setPin(D2,0);
+leftWheel.stop();
+rightWheel.stop();
 
-  keypress(process.stdin);
+
+//  keypress(process.stdin);
   process.stdin.resume();
   process.stdin.setEncoding('utf8');
   process.stdin.setRawMode(true);
@@ -68,40 +78,63 @@ rightWheel.setPin(D2,0);
       console.log('Quitting');
       process.exit();
 
-    } else if ( key.name === 'up' ) {
+    } else if ( key.name === 'up'  && !state.up ) {
 
       console.log('Forward');
-      	leftWheel.setPWM(D7,PWMB);
-      	leftWheel.setPin(D6,1);
-      	leftWheel.setPin(D5,0);
+      state.down = false;
+      state.up = true;
+	
+      leftWheel.stop().forward(PWMA);
+      rightWheel.stop().forward(PWMB);	
+	
+/*      leftWheel.setPWM(D7,PWMB);
+     	leftWheel.setPin(D6,1);
+     	leftWheel.setPin(D5,0);
 
 	rightWheel.setPWM(D8,PWMA);
 	rightWheel.setPin(D3,1);
-	rightWheel.setPin(D2,0);
+	rightWheel.setPin(D2,0);*/
 
-    } else if ( key.name === 'down' ) {
+
+    } else if ( key.name === 'down' && !state.down ) {
 
       console.log('Backward');
-      	leftWheel.setPWM(D7,PWMB);
-      	leftWheel.setPin(D6,0);
-      	leftWheel.setPin(D5,1);
 
-	rightWheel.setPWM(D8,PWMA);
-	rightWheel.setPin(D3,0);
-	rightWheel.setPin(D2,1);
+	state.down = true;
+        state.up = false;
+	
+/*	leftWheel.setPWM(D7,PWMB);
+        leftWheel.setPin(D6,0);
+        leftWheel.setPin(D5,1);
+
+        rightWheel.setPWM(D8,PWMA);
+        rightWheel.setPin(D3,0);
+        rightWheel.setPin(D2,1);*/
+
+	leftWheel.stop().reverse(PWMA);
+	rightWheel.stop().reverse(PWMB);
 
    } else if ( key.name === 'space' ) {
 
       console.log('Stopping');
-      	leftWheel.setPin(D7,0);
-      	leftWheel.setPin(D6,0);
-      	leftWheel.setPWM(D5,0);
+	state.down = false;
+        state.up = false;
 
-	rightWheel.setPWM(D8,0);
-	rightWheel.setPin(D3,0);
-	rightWheel.setPin(D2,0);
+	leftWheel.stop();
+	rightWheel.stop();
 
+    } else if (key.name === 'left'){
+	console.log('Turning left');
+	leftWheel.stop().forward(200);
+	rightWheel.stop().reverse(200);
+
+    } else if (key.name === 'right'){
+	console.log('Turning right');
+
+	leftWheel.stop().reverse(200);
+	rightWheel.stop().forward(200);
     }
 
   });
 });
+
